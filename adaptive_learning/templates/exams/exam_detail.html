@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ exam.title }}{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:700px;">
+    <div class="card p-4">
+        <span class="badge bg-danger mb-2" style="width:fit-content">{{ exam.exam_type|upper }}</span>
+        <h3 class="fw-bold">{{ exam.title }}</h3>
+        <p class="text-muted">{{ exam.description }}</p>
+        <hr>
+        <div class="row text-center mb-3">
+            <div class="col-3">
+                <h4 class="text-primary fw-bold">{{ exam.total_marks }}</h4>
+                <small class="text-muted">Total Marks</small>
+            </div>
+            <div class="col-3">
+                <h4 class="text-success fw-bold">{{ exam.pass_marks }}</h4>
+                <small class="text-muted">Pass Marks</small>
+            </div>
+            <div class="col-3">
+                <h4 class="text-warning fw-bold">{{ exam.duration_min }}</h4>
+                <small class="text-muted">Minutes</small>
+            </div>
+            <div class="col-3">
+                <h4 class="text-info fw-bold">{{ exam.questions.count }}</h4>
+                <small class="text-muted">Questions</small>
+            </div>
+        </div>
+        <p><i class="fas fa-clock me-2 text-primary"></i><strong>Start:</strong> {{ exam.start_time }}</p>
+        <p><i class="fas fa-clock me-2 text-danger"></i><strong>End:</strong> {{ exam.end_time }}</p>
+        <hr>
+        {% if already_attempted %}
+        <div class="alert alert-info">
+            <i class="fas fa-check-circle me-2"></i>You have already attempted this exam.
+            <a href="{% url 'my_results' %}" class="alert-link">View your result</a>
+        </div>
+        {% elif is_active %}
+        <a href="{% url 'start_exam' exam.pk %}" class="btn btn-danger btn-lg w-100">
+            <i class="fas fa-play me-2"></i>Start Exam Now
+        </a>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-hourglass me-2"></i>This exam is not active right now.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

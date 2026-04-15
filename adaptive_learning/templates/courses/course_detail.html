@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card p-4 mb-4">
+                <span class="badge bg-info mb-2" style="width:fit-content">{{ course.level }}</span>
+                <h3 class="fw-bold">{{ course.title }}</h3>
+                <p class="text-muted">{{ course.description }}</p>
+                <p><i class="fas fa-user me-2 text-primary"></i><strong>Teacher:</strong> {{ course.teacher.username }}</p>
+                <p><i class="fas fa-users me-2 text-primary"></i><strong>Enrolled:</strong> {{ course.total_enrolled }} students</p>
+                {% if is_enrolled %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>You are enrolled in this course!
+                </div>
+                {% elif user.role == 'student' %}
+                <a href="{% url 'enroll_course' course.pk %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i>Enroll Now
+                    {% if course.is_free %}(Free){% else %}(₹{{ course.price }}){% endif %}
+                </a>
+                {% endif %}
+                {% if user == course.teacher %}
+                <a href="{% url 'add_module' course.pk %}" class="btn btn-outline-primary mt-2">
+                    <i class="fas fa-plus me-1"></i>Add Module
+                </a>
+                {% endif %}
+            </div>
+
+            <h5 class="fw-bold mb-3">
+                <i class="fas fa-list me-2 text-primary"></i>Course Modules
+            </h5>
+            {% for module in modules %}
+            <div class="card mb-3">
+                <div class="card-header fw-bold bg-light">
+                    <i class="fas fa-folder me-2 text-warning"></i>
+                    {{ module.order }}. {{ module.title }}
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">{{ module.description }}</p>
+                    {% for material in module.materials.all %}
+                    <div class="d-flex align-items-center p-2 border rounded mb-2">
+                        {% if material.material_type == 'video' %}
+                        <i class="fas fa-play-circle text-danger me-2"></i>
+                        {% elif material.material_type == 'pdf' %}
+                        <i class="fas fa-file-pdf text-danger me-2"></i>
+                        {% else %}
+                        <i class="fas fa-file-alt text-primary me-2"></i>
+                        {% endif %}
+                        <span>{{ material.title }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No modules added yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h6 class="fw-bold">Course Info</h6>
+                <hr>
+                <p><i class="fas fa-layer-group me-2"></i>Modules: {{ course.modules.count }}</p>
+                <p><i class="fas fa-signal me-2"></i>Level: {{ course.get_level_display }}</p>
+                <p>
+                    <i class="fas fa-tag me-2"></i>Price:
+                    {% if course.is_free %}
+                    <span class="badge bg-success">FREE</span>
+                    {% else %}₹{{ course.price }}{% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

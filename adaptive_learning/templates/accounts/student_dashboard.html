@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <h4 class="fw-bold mb-4">
+        <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+        Welcome, {{ user.username }}! 👋
+    </h4>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card" style="background:linear-gradient(135deg,#667eea,#764ba2);">
+                <i class="fas fa-book-open fa-2x mb-2"></i>
+                <h2 class="fw-bold">{{ total_enrolled }}</h2>
+                <p class="mb-0">Enrolled Courses</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background:linear-gradient(135deg,#f093fb,#f5576c);">
+                <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                <h2 class="fw-bold">{{ available_exams.count }}</h2>
+                <p class="mb-0">Available Exams</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">
+                <i class="fas fa-bell fa-2x mb-2"></i>
+                <h2 class="fw-bold">{{ notifications.count }}</h2>
+                <p class="mb-0">Notifications</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enrolled Courses -->
+    <div class="card p-4 mb-4">
+        <h5 class="fw-bold mb-3"><i class="fas fa-book me-2 text-primary"></i>My Courses</h5>
+        {% if enrolled_courses %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr><th>Course</th><th>Teacher</th><th>Level</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrolled_courses %}
+                    <tr>
+                        <td>{{ enrollment.course.title }}</td>
+                        <td>{{ enrollment.course.teacher.username }}</td>
+                        <td><span class="badge bg-info">{{ enrollment.course.level }}</span></td>
+                        <td><span class="badge bg-success">{{ enrollment.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No courses enrolled yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Available Exams -->
+    <div class="card p-4">
+        <h5 class="fw-bold mb-3"><i class="fas fa-pen me-2 text-danger"></i>Available Exams</h5>
+        {% if available_exams %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr><th>Exam</th><th>Course</th><th>Total Marks</th><th>Duration</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for exam in available_exams %}
+                    <tr>
+                        <td>{{ exam.title }}</td>
+                        <td>{{ exam.course.title }}</td>
+                        <td>{{ exam.total_marks }}</td>
+                        <td>{{ exam.duration_min }} min</td>
+                        <td><a href="#" class="btn btn-sm btn-primary">Start Exam</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No exams available right now.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
